@@ -6,24 +6,33 @@
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
 ![Google Fonts](https://img.shields.io/badge/Google%20Fonts-4285F4?style=for-the-badge&logo=google-fonts&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 
 ¡Repositorio de Ciberseguridad con Python! 
 Este proyecto presenta una plataforma web interactiva diseñada para demostrar y utilizar diversas herramientas de ciberseguridad desarrolladas en Python. 
-La interfaz esta diseñada con un estilo de terminal, ofreciendo una experiencia visualmente atractiva e intuitiva.
+La interfaz está diseñada con un estilo de terminal, ofreciendo una experiencia visualmente atractiva e intuitiva.
+
+## 🌐 Demo en línea activa
+Puedes probar la aplicación directamente en:  
+🔗 [CyberTools](https://cybertools-a2nh.onrender.com/)
 
 ## 🛠️ Tecnologías Utilizadas
 
-Backend:
+**Backend:**
   - Python 3.x
   - Flask: Microframework web para el manejo de rutas y APIs.
 
-Frontend:
-  - HTML 5
-  - CSS 3
+**Frontend:**
+  - HTML5
+  - CSS3
   - JavaScript: Para la interacción y la comunicación con el Backend.
   - Bootstrap 5: Para el diseño responsivo.
   - Bootstrap Icons: Para el uso de iconos.
   - Google Fonts: Para el uso de fuentes.
+
+**Despliegue:**
+  - Render: Plataforma cloud para despliegue de aplicaciones web.
 
 ## 🚀 Configuración Inicial
 
@@ -47,7 +56,20 @@ Frontend:
    WARNING: This is a development server. Do not use it in a production deployment.
    Use a production WSGI server instead.
    * Running on http://127.0.0.1:5000
+   * Running on http://192.168.100.37:5000
    Press CTRL+C to quit
+
+## 🚀 Despliegue en Render
+
+1. **Crear una cuenta en Render**
+2. **Haz click en "New" seguido de "Web Service"**
+3. **Conectar tu repositorio de GitHub, de no aparecer puedes colocar el link del repositorio**
+4. **Configurar:**
+   - Runtime: Python 3
+   - Build Command: pip install -r requirements.txt
+   - Start Command: gunicorn app:app
+5. **Seleccionar el plan gratuito**
+6. **¡Desplegar!**
 
 ## 📫 Contacto
 
