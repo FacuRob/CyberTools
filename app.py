@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, jsonify
 from components.scan_website_ports import scan_website_ports
 from components.generate_strong_password import generate_strong_password
@@ -11,6 +12,11 @@ app.config['JSON_SORT_KEYS'] = False  # Para mantener el orden en las respuestas
 @app.route('/')
 def index():
     return render_template('index.html')
+
+# Colocación de icono.
+@app.route('/images/logo.ico')
+def favicon():
+    return app.send_static_file('images/logo.ico')
 
 # API para escaneo de puertos
 @app.route('/api/scan_ports', methods=['POST'])
@@ -86,4 +92,9 @@ def not_found(error):
 
 # Inicio de la aplicación
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(
+        host='0.0.0.0',
+        port=port,
+        threaded=True  # Permite manejar múltiples solicitudes
+    )
