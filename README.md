@@ -9,7 +9,7 @@
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 
-¡Repositorio de Ciberseguridad con Python! 
+¡Repositorio de Ciberseguridad con Python! 🐍
 Este proyecto presenta una plataforma web interactiva diseñada para demostrar y utilizar diversas herramientas de ciberseguridad desarrolladas en Python. 
 La interfaz está diseñada con un estilo de terminal, ofreciendo una experiencia visualmente atractiva e intuitiva.
 
