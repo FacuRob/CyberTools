@@ -51,7 +51,6 @@ async function runPortScan() {
   const outputArea = document.getElementById("port-scan-output");
   const target = targetInput.value.trim();
 
-  // Validación de entrada
   if (!target) {
     showError(
       outputArea,
@@ -60,10 +59,8 @@ async function runPortScan() {
     return;
   }
 
-  // Mostrar estado de carga
   showLoading(outputArea, "Iniciando escaneo de puertos...");
 
-  //Conexion de JS a Python para Analisis de Puertos Webs (App.py)
   try {
     const response = await fetch("/api/scan_ports", {
       method: "POST",
@@ -73,16 +70,34 @@ async function runPortScan() {
 
     const data = await response.json();
 
-    if (response.ok) {
-      showResult(outputArea, formatPortScanResults(data.result));
-    } else {
-      showError(
-        outputArea,
-        data.error || "Error en el servidor al procesar la solicitud."
-      );
+    if (!response.ok) {
+      throw new Error(data.error || "Error en el servidor");
     }
+
+    // Formateo mejorado de los resultados
+    let resultText = `
+      Target: ${data.data.target || "No disponible"}
+      IP: ${data.data.ip || "No resuelta"}
+      Tiempo: ${data.data.scan_time || "?"}
+      Puertos escaneados: ${data.data.scanned_ports || "?"}
+      
+      Puertos abiertos:
+    `;
+
+    if (data.data.open_ports && data.data.open_ports.length > 0) {
+      data.data.open_ports.forEach((port) => {
+        resultText += `
+        • Puerto ${port.port}: ${port.service || "servicio desconocido"} (${
+          port.response_time
+        })`;
+      });
+    } else {
+      resultText += "      Ningún puerto abierto encontrado";
+    }
+
+    showResult(outputArea, resultText);
   } catch (error) {
-    showError(outputArea, `Error de conexión: ${error.message}`);
+    showError(outputArea, error.message);
   }
 }
 
@@ -284,7 +299,7 @@ function copyToClipboard(text) {
 }
 
 // Formateador de resultados de escaneo de puertos
-function formatPortScanResults(results) {
+/*function formatPortScanResults(results) {
   if (!results) return "No se encontraron resultados.";
 
   // Si ya está formateado (como texto preformateado)
@@ -314,4 +329,25 @@ function formatPortScanResults(results) {
   }
 
   return results.toString();
+}*/
+function formatPortScanResults(data) {
+  if (!data) return "No se encontraron resultados.";
+
+  let formatted = `=== RESULTADOS DEL ESCANEO ===\n\n`;
+  formatted += `Objetivo: ${data.target || "Desconocido"}\n`;
+  formatted += `Dirección IP: ${data.ip_address || "No resuelta"}\n`;
+  formatted += `Puertos escaneados: ${data.ports_scanned || "?"}\n`;
+  formatted += `Tiempo de escaneo: ${data.scan_time || "?"} segundos\n\n`;
+
+  if (data.open_ports && data.open_ports.length > 0) {
+    formatted += "PUERTOS ABIERTOS:\n";
+    formatted += "-----------------\n";
+    data.open_ports.forEach((port) => {
+      formatted += `• Puerto ${port}\n`;
+    });
+  } else {
+    formatted += "No se encontraron puertos abiertos.\n";
+  }
+
+  return formatted;
 }

@@ -1,152 +1,194 @@
 import socket
 import concurrent.futures
-from typing import List, Tuple
+from typing import List, Dict, Optional, Tuple
 import ipaddress
 import time
+import logging
+import os
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class PortScanner:
-    """Clase para escanear puertos de un sitio web o dirección IP de manera eficiente."""
+    """Versión mejorada del escáner de puertos con soporte IPv4/IPv6"""
     
     COMMON_PORTS = [
-        20, 21, 22, 23, 25, 53, 80, 110, 135, 139, 
-        143, 443, 445, 3389, 8080, 8443, 3306, 5432,
-        27017, 6379, 11211, 9200
+        80, 443, 8080, 8443,  # Puertos web comunes
+        22, 21, 23,           # Puertos de servicios
+        3306, 5432,          # Bases de datos
+        3389, 5900           # Escritorio remoto
     ]
     
-    def __init__(self, timeout: float = 1.0, max_workers: int = 100):
+    def __init__(self, timeout: float = 2.0, max_workers: int = 50):
         """
-        Inicializa el escáner de puertos.
-        
-        Args:
-            timeout: Tiempo de espera para la conexión a cada puerto (en segundos)
-            max_workers: Número máximo de hilos para escaneo concurrente
+        Configuración optimizada:
+        - Timeout: 2 segundos
+        - Workers: 50 hilos máximo
         """
         self.timeout = timeout
         self.max_workers = max_workers
-    
+        self.is_render = os.environ.get('RENDER', '').lower() == 'true'
+
     def validate_target(self, target: str) -> Tuple[bool, str]:
-        """Valida el objetivo de escaneo."""
-        if not target:
-            return False, "Error: No se proporcionó un objetivo para el escaneo."
-        
-        if not isinstance(target, str) or len(target) > 255:
-            return False, "Error: Objetivo inválido."
-        
-        # Verificar si es una dirección IP válida
+        """Validación mejorada del target"""
         try:
-            ipaddress.ip_address(target)
+            if not target or len(target) > 253:
+                return False, "Target inválido"
+            
+            # Verificar formato básico
+            if any(c in target for c in " \t\n\r"):
+                return False, "Target contiene espacios"
+                
+            # Verificar si es IP
+            try:
+                ipaddress.ip_address(target)
+                return True, target
+            except ValueError:
+                pass
+                
+            # Verificar formato de dominio
+            if not all(part.isalnum() or part == '-' for part in target.split('.')):
+                return False, "Dominio inválido"
+                
             return True, target
-        except ValueError:
-            pass  # No es una IP, podría ser un hostname
-        
-        return True, target
-    
+        except Exception as e:
+            return False, f"Error de validación: {str(e)}"
+
     def resolve_host(self, target: str) -> Tuple[bool, str]:
-        """Resuelve el hostname a una dirección IP."""
+        """Resolución con soporte IPv6"""
         try:
-            ip_address = socket.gethostbyname(target)
-            return True, ip_address
-        except socket.gaierror:
-            return False, f"Error: No se pudo resolver el host '{target}'. Verifica la dirección o conexión."
+            # Usar getaddrinfo que soporta ambos protocolos
+            addr_info = socket.getaddrinfo(target, None)
+            return True, addr_info[0][4][0]
+        except (socket.gaierror, IndexError) as e:
+            logger.error(f"Error resolviendo {target}: {str(e)}")
+            return False, f"No se pudo resolver {target}"
         except Exception as e:
-            return False, f"Error inesperado al resolver el host: {e}"
-    
-    def scan_port(self, ip_address: str, port: int) -> Tuple[int, bool, str]:
-        """Escanea un puerto individual."""
+            logger.error(f"Error inesperado: {str(e)}")
+            return False, f"Error resolviendo host: {str(e)}"
+
+    def scan_port(self, ip: str, port: int) -> Dict:
+        """Escaneo compatible con IPv4/IPv6"""
+        result = {
+            "port": port,
+            "open": False,
+            "error": None,
+            "service": None,
+            "response_time": None
+        }
+        
+        # Determinar familia de sockets según la IP
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                sock.settimeout(self.timeout)
-                result_code = sock.connect_ex((ip_address, port))
-                if result_code == 0:
+            if ':' in ip:  # IPv6
+                sock_family = socket.AF_INET6
+            else:  # IPv4
+                sock_family = socket.AF_INET
+        except Exception as e:
+            result["error"] = f"Error determinando familia IP: {str(e)}"
+            return result
+        
+        try:
+            with socket.socket(sock_family, socket.SOCK_STREAM) as s:
+                s.settimeout(self.timeout)
+                
+                start = time.time()
+                try:
+                    s.connect((ip, port))
+                    result["open"] = True
                     try:
-                        service = socket.getservbyport(port)
+                        result["service"] = socket.getservbyport(port)
                     except:
-                        service = "desconocido"
-                    return port, True, service
-                return port, False, ""
+                        result["service"] = "unknown"
+                except (socket.timeout, ConnectionRefusedError, BlockingIOError, OSError) as e:
+                    if isinstance(e, ConnectionRefusedError):
+                        result["error"] = "Connection refused"
+                    elif isinstance(e, socket.timeout):
+                        result["error"] = "Timeout"
+                    else:
+                        result["error"] = str(e)
+                except Exception as e:
+                    result["error"] = f"Unexpected error: {str(e)}"
+                
+                result["response_time"] = f"{(time.time() - start)*1000:.2f}ms"
+                
         except Exception as e:
-            return port, False, f"Error: {str(e)}"
-    
-    def scan_ports(self, target: str, ports: List[int] = None) -> str:
-        """
-        Escanea los puertos especificados de un objetivo.
+            result["error"] = f"Socket error: {str(e)}"
         
-        Args:
-            target: Dirección IP o hostname a escanear
-            ports: Lista de puertos a escanear (opcional, usa los comunes por defecto)
-        
-        Returns:
-            String formateado con los resultados del escaneo
-        """
-        # Validación del objetivo
-        is_valid, validation_msg = self.validate_target(target)
+        return result
+
+    def scan_ports(self, target: str, ports: Optional[List[int]] = None) -> Dict:
+        """Versión optimizada con mejor reporte de resultados"""
+        # Validación
+        is_valid, msg = self.validate_target(target)
         if not is_valid:
-            return validation_msg
+            return {"error": msg, "status": "invalid_target"}
         
-        # Resolución del host
-        resolved, host_msg = self.resolve_host(target)
+        # Resolución
+        resolved, ip = self.resolve_host(target)
         if not resolved:
-            return host_msg
+            return {"error": ip, "status": "resolution_failed"}
         
-        ip_address = host_msg
+        # Configuración de puertos
         ports_to_scan = ports or self.COMMON_PORTS
         
-        # Preparar resultados
-        results = [
-            f"\n[+] Escaneo de puertos iniciado: {target}",
-            f"[+] Dirección IP resuelta: {ip_address}",
-            f"[+] Puertos a escanear: {len(ports_to_scan)}",
-            f"[+] Tiempo de espera por puerto: {self.timeout}s",
-            "[+] Escaneo en progreso...\n"
-        ]
+        # Limitar puertos en Render
+        if self.is_render and len(ports_to_scan) > 20:
+            ports_to_scan = ports_to_scan[:20]
+            logger.warning("Render Free Tier: Limitado a 20 puertos")
         
-        open_ports = []
+        results = []
         start_time = time.time()
         
-        # Escaneo concurrente de puertos
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            futures = {
-                executor.submit(self.scan_port, ip_address, port): port 
-                for port in ports_to_scan
+        try:
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=min(self.max_workers, len(ports_to_scan))
+            ) as executor:
+                futures = {executor.submit(self.scan_port, ip, port): port for port in ports_to_scan}
+                
+                for future in concurrent.futures.as_completed(futures):
+                    try:
+                        results.append(future.result())
+                    except Exception as e:
+                        logger.error(f"Error en thread: {str(e)}")
+                        results.append({
+                            "port": futures[future],
+                            "open": False,
+                            "error": str(e),
+                            "service": None
+                        })
+        
+        except Exception as e:
+            logger.error(f"Error en ThreadPool: {str(e)}")
+            return {
+                "error": f"Error en escaneo: {str(e)}",
+                "status": "scan_failed"
             }
-            
-            for future in concurrent.futures.as_completed(futures):
-                port, is_open, service_or_error = future.result()
-                if is_open:
-                    open_ports.append(port)
-                    results.append(f"  [+] Puerto {port}/tcp ({service_or_error}): Abierto")
-                else:
-                    if service_or_error:  # Hubo un error
-                        results.append(f"  [!] Puerto {port}/tcp: Error ({service_or_error})")
         
-        # Resumen del escaneo
-        scan_duration = time.time() - start_time
-        results.append("\n[+] Resumen del escaneo:")
-        results.append(f"  - Tiempo total: {scan_duration:.2f} segundos")
-        results.append(f"  - Puertos abiertos encontrados: {len(open_ports)}")
+        # Procesar resultados
+        open_ports = [r for r in results if r["open"]]
+        closed_ports = [r for r in results if not r["open"]]
         
-        if open_ports:
-            results.append("  - Lista de puertos abiertos:")
-            for port in sorted(open_ports):
-                results.append(f"    * {port}/tcp")
-        else:
-            results.append("  - No se encontraron puertos abiertos.")
-        
-        results.append("\n[+] Escaneo completado.")
-        
-        return "\n".join(results)
+        return {
+            "status": "completed",
+            "target": target,
+            "ip": ip,
+            "scanned_ports": len(ports_to_scan),
+            "open_ports": open_ports,
+            "closed_ports": closed_ports if len(closed_ports) < 10 else [],
+            "scan_time": f"{time.time() - start_time:.2f}s",
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
 
 
-def scan_website_ports(target: str, ports: List[int] = None) -> str:
-    """
-    Función conveniente para escanear puertos sin necesidad de instanciar la clase.
-    
-    Args:
-        target: Dirección IP o hostname a escanear
-        ports: Lista opcional de puertos a escanear (usa los comunes por defecto)
-    
-    Returns:
-        String formateado con los resultados del escaneo
-    """
-    scanner = PortScanner()
-    return scanner.scan_ports(target, ports)
+def scan_website_ports(target: str, ports: Optional[List[int]] = None) -> Dict:
+    """Interfaz mejorada para el escáner"""
+    try:
+        scanner = PortScanner()
+        return scanner.scan_ports(target, ports)
+    except Exception as e:
+        logger.error(f"Error fatal en scan_website_ports: {str(e)}")
+        return {
+            "error": f"Error interno: {str(e)}",
+            "status": "failed"
+        }

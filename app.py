@@ -1,12 +1,15 @@
 import os
 from flask import Flask, render_template, request, jsonify
+from typing import Optional, Dict, Any
+from typing import List
 from components.scan_website_ports import scan_website_ports
 from components.generate_strong_password import generate_strong_password
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
-# Configuración básica (opcional)
+# Configuración básica
 app.config['JSON_SORT_KEYS'] = False  # Para mantener el orden en las respuestas JSON
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Límite de 16MB para requests
 
 # Ruta principal - Sirve el frontend HTML
 @app.route('/')
@@ -21,33 +24,44 @@ def favicon():
 # API para escaneo de puertos
 @app.route('/api/scan_ports', methods=['POST'])
 def api_scan_ports():
-    # Validación de entrada
-    if not request.is_json:
-        return jsonify({"error": "El contenido debe ser JSON"}), 400
-    
-    data = request.get_json()
-    target = data.get('target')
-
-    if not target:
-        return jsonify({"error": "Se requiere el parámetro 'target'"}), 400
-
     try:
-        # Lógica de escaneo
-        result = scan_website_ports(target)
+        # Verificar si es JSON
+        if not request.is_json:
+            return jsonify({"status": "error", "message": "Se esperaba JSON"}), 400
+
+        data = request.get_json()
+        target = data.get('target')
         
-        # Manejo de errores de la función
-        if isinstance(result, str) and result.startswith("Error:"):
-            return jsonify({"error": result[7:]}), 400  # Remueve "Error:" del mensaje
-            
+        # Validación mínima del target
+        if not target or not isinstance(target, str):
+            return jsonify({"status": "error", "message": "Target inválido"}), 400
+
+        # Obtener puertos (ahora con valor por defecto)
+        custom_ports = data.get('ports', [80, 443, 22, 21, 8080])  # Puertos comunes por defecto
+
+        # Validar puertos
+        if not isinstance(custom_ports, list):
+            return jsonify({"status": "error", "message": "Los puertos deben ser una lista"}), 400
+
+        # Escanear
+        scan_result = scan_website_ports(target, custom_ports)
+        
+        # Manejar errores del escaneo
+        if "error" in scan_result:
+            return jsonify({"status": "error", "message": scan_result["error"]}), 400
+
+        # Éxito
         return jsonify({
             "status": "success",
-            "target": target,
-            "open_ports": result
+            "data": scan_result
         })
-        
+
     except Exception as e:
+        app.logger.error(f"Error grave: {str(e)}", exc_info=True)
         return jsonify({
-            "error": f"Error interno del servidor: {str(e)}"
+            "status": "error",
+            "message": "Error en el servidor",
+            "debug": str(e)  # Solo en desarrollo
         }), 500
 
 # API para generación de contraseñas
@@ -57,8 +71,8 @@ def api_generate_password():
     if not request.is_json:
         return jsonify({"error": "El contenido debe ser JSON"}), 400
     
-    data = request.get_json()
-    length = data.get('length', 12)  # Valor por defecto: 12
+    data: Dict[str, Any] = request.get_json()
+    length: int = data.get('length', 12)  # Valor por defecto: 12
 
     try:
         length = int(length)
@@ -66,7 +80,7 @@ def api_generate_password():
             return jsonify({"error": "La longitud debe estar entre 8 y 64 caracteres"}), 400
             
         # Generación de contraseña
-        password = generate_strong_password(length)
+        password: str = generate_strong_password(length)
         
         # Manejo de errores de la función
         if isinstance(password, str) and password.startswith("Error:"):
@@ -81,8 +95,10 @@ def api_generate_password():
     except ValueError:
         return jsonify({"error": "La longitud debe ser un número válido"}), 400
     except Exception as e:
+        app.logger.error(f"Error en generación de contraseña: {str(e)}")
         return jsonify({
-            "error": f"Error interno del servidor: {str(e)}"
+            "error": "Error interno del servidor al generar contraseña",
+            "details": str(e)
         }), 500
 
 # Manejador de errores 404
@@ -90,11 +106,27 @@ def api_generate_password():
 def not_found(error):
     return jsonify({"error": "Endpoint no encontrado"}), 404
 
+# Manejador de errores 500
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({
+        "error": "Error interno del servidor",
+        "message": "Ocurrió un error inesperado"
+    }), 500
+
+# Health check para Render
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
 # Inicio de la aplicación
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
+    port: int = int(os.environ.get("PORT", 5000))
+    debug: bool = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    
     app.run(
         host='0.0.0.0',
         port=port,
-        threaded=True  # Permite manejar múltiples solicitudes
+        debug=debug,
+        threaded=True
     )
