@@ -1,5 +1,3 @@
-# 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools 
-
 # 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools Pro 🐍
 
 <div align="center">
@@ -68,7 +66,7 @@ Puedes probar la aplicación directamente en:
    - openpyxl (análisis de Excel)
    - Y otras dependencias necesarias
 
-   cd nombre-del-repositorio
+   cd CyberTools
 
 2. **Instalación de Microframework de Python**
    ```bash
