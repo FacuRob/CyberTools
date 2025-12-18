@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 # 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools Pro 🐍
-=======
+
 # 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools 🐍
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
+>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 
 <div align="center">
   
