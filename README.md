@@ -1,4 +1,4 @@
-# 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools 🐍
+# 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools Pro 🐍
 
 <div align="center">
   
@@ -18,6 +18,12 @@
 ¡Repositorio de Ciberseguridad con Python! 🐍
 Este proyecto presenta una plataforma web interactiva diseñada para demostrar y utilizar diversas herramientas de ciberseguridad desarrolladas en Python. 
 La interfaz está diseñada con un estilo de terminal, ofreciendo una experiencia visualmente atractiva e intuitiva.
+
+## ✨ Características Principales
+
+- **🔍 Escaneo de Puertos Optimizado**: Análisis paralelo con caché DNS, timeouts dinámicos y detección inteligente de servicios (100 hilos concurrentes)
+- **🔐 Generador de Contraseñas Avanzado**: Generación aleatoria o basada en frases memorables con opciones personalizables
+- **📄 Analizador de Metadatos**: Extracción de información oculta de archivos PDF, Word, Excel, imágenes y más (EXIF, GPS, autor, etc.)
 
 ## 🌐 Demo en línea activa
 Puedes probar la aplicación directamente en:  
@@ -45,15 +51,25 @@ Puedes probar la aplicación directamente en:
 1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/FacuRob/CyberTools
-   cd nombre-del-repositorio
+   cd CyberTools
 
-2. **Instalación de Microframework de Python**
+2. **Instalar todas las dependencias**
    ```bash
-   pip install Flask
+   pip install -r requirements.txt
+
+   Esto instalará automáticamente:
+   - Flask (framework web)
+   - Pillow (análisis de imágenes y EXIF)
+   - PyPDF2 (análisis de PDF)
+   - python-docx (análisis de Word)
+   - openpyxl (análisis de Excel)
+   - Y otras dependencias necesarias
 
 3. **Ejecución del Sistema**
    ```bash
    python app.py
+
+   El servidor se ejecutará en http://127.0.0.1:5000
 
 4. **Nota*: Al Ejecutar veras algo similar**
    ```bash
