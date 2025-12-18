@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 /* ============================================
    CYBERTOOLS PRO v2.0 - COMPLETE STYLESHEET
    ============================================ */
 
 /* Asignación a los colores por parámetro establecido */
-=======
-/* Asignacion a los colores por parametro establecido */
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 :root {
   --cyber-dark: #0a0e17;
   --cyber-darker: #05080f;
@@ -131,10 +127,7 @@ body {
   font-weight: 500;
   margin: 0;
   color: var(--cyber-cyan);
-<<<<<<< HEAD
   font-size: 1.25rem;
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 }
 
 .cyber-card-body {
@@ -164,11 +157,7 @@ body {
   margin-right: 8px;
 }
 
-<<<<<<< HEAD
 /* Estilo de corrección de Input */
-=======
-/* Estilo de correccion de Input */
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 .cyber-input-group {
   display: flex;
   align-items: stretch;
@@ -184,10 +173,7 @@ body {
   justify-content: center;
   padding: 0 1rem;
   min-width: 45px;
-<<<<<<< HEAD
   border-radius: 6px 0 0 6px;
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 }
 
 .cyber-input-prepend i {
@@ -210,7 +196,6 @@ body {
 }
 
 .cyber-input:focus {
-<<<<<<< HEAD
   background-color: var(--cyber-darker);
   border-color: var(--cyber-cyan);
   box-shadow: 0 0 0 0.25rem rgba(0, 240, 255, 0.25);
@@ -221,19 +206,6 @@ body {
 .cyber-input::placeholder {
   color: rgba(224, 224, 224, 0.4);
 }
-=======
-  background-color: var(--cyber-darker); /* Mantiene el color oscuro */
-  border-color: var(--cyber-cyan);
-  box-shadow: 0 0 0 0.25rem rgba(0, 240, 255, 0.25);
-  outline: none;
-  color: var(--cyber-light); /* Asegura que el texto se mantenga claro */
-}
-
-/* Corrección de input, codigo inecesario en este momento */
-/*input[type="number"] {
-  -moz-appearance: textfield;
-}*/
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -241,7 +213,6 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 
-<<<<<<< HEAD
 input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -562,8 +533,6 @@ input[type="number"] {
   }
 }
 
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 /* Botones */
 .btn-cyber {
   background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-purple));
@@ -577,10 +546,7 @@ input[type="number"] {
   font-size: 0.85rem;
   letter-spacing: 1px;
   margin-bottom: 1.5rem;
-<<<<<<< HEAD
   cursor: pointer;
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 }
 
 .btn-cyber:hover {
@@ -589,13 +555,10 @@ input[type="number"] {
   color: var(--cyber-dark);
 }
 
-<<<<<<< HEAD
 .btn-cyber:active {
   transform: translateY(0);
 }
 
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 /* Áreas de salida */
 .cyber-output {
   background-color: var(--cyber-darker);
@@ -605,19 +568,12 @@ input[type="number"] {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.85rem;
   color: var(--cyber-success);
-<<<<<<< HEAD
   min-height: 200px;
   max-height: 500px;
   overflow-y: auto;
   position: relative;
   display: flex;
   flex-direction: column;
-=======
-  min-height: 150px;
-  max-height: 300px;
-  overflow-y: auto;
-  position: relative;
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 }
 
 .output-placeholder {
@@ -625,7 +581,6 @@ input[type="number"] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-<<<<<<< HEAD
   flex: 1;
   color: rgba(0, 240, 255, 0.5);
   text-align: center;
@@ -635,11 +590,6 @@ input[type="number"] {
 
 .cyber-output:hover .output-placeholder {
   opacity: 1;
-=======
-  height: 100%;
-  color: rgba(0, 240, 255, 0.5);
-  text-align: center;
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 }
 
 .output-placeholder i {
@@ -647,7 +597,6 @@ input[type="number"] {
   margin-bottom: 1rem;
 }
 
-<<<<<<< HEAD
 .blinking-cursor {
   animation: blink 1s infinite;
   font-weight: 100;
@@ -681,8 +630,6 @@ input[type="number"] {
   flex: 1;
 }
 
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 /* Scrollbar personalizada */
 .cyber-output::-webkit-scrollbar {
   width: 8px;
@@ -702,7 +649,6 @@ input[type="number"] {
   background: var(--cyber-purple);
 }
 
-<<<<<<< HEAD
 /* Estados de carga */
 .spinner-border {
   border-color: var(--cyber-cyan);
@@ -719,8 +665,6 @@ input[type="number"] {
   color: var(--cyber-danger);
 }
 
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 /* Footer */
 .cyber-footer {
   background-color: var(--cyber-darker);
@@ -737,11 +681,7 @@ input[type="number"] {
 
 .cyber-footer p {
   color: rgba(224, 224, 224, 0.6);
-<<<<<<< HEAD
   margin-bottom: 0.5rem;
-=======
-  margin-bottom: 0;
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 }
 
 .cyber-social {
@@ -753,10 +693,7 @@ input[type="number"] {
   font-size: 1.2rem;
   margin-left: 1rem;
   transition: color 0.3s;
-<<<<<<< HEAD
   text-decoration: none;
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 }
 
 .cyber-social a:hover {
@@ -767,14 +704,10 @@ input[type="number"] {
   color: rgba(224, 224, 224, 0.4);
 }
 
-<<<<<<< HEAD
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
 
-=======
-/* Responsive */
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 @media (max-width: 768px) {
   .cyber-title {
     font-size: 1.8rem;
@@ -788,13 +721,10 @@ input[type="number"] {
     padding-top: 80px;
   }
 
-<<<<<<< HEAD
   .cyber-card-header h3 {
     font-size: 1.1rem;
   }
 
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
   .cyber-footer .text-md-end {
     text-align: left !important;
     margin-top: 1.5rem;
@@ -804,7 +734,6 @@ input[type="number"] {
     margin-left: 0;
     margin-right: 1rem;
   }
-<<<<<<< HEAD
 
   /* Notificaciones en móvil */
   .notification {
@@ -1050,6 +979,3 @@ input,
 .btn-remove i {
   font-size: 1.2rem;
 }
-=======
-}
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
