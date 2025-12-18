@@ -1,7 +1,6 @@
-# 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools Pro 🐍
+# 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools 
 
-# 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools 🐍
->>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
+# 🛡️ Ciberseguridad Web con Python: 🐍 CyberTools Pro 🐍
 
 <div align="center">
   
@@ -22,15 +21,12 @@
 Este proyecto presenta una plataforma web interactiva diseñada para demostrar y utilizar diversas herramientas de ciberseguridad desarrolladas en Python. 
 La interfaz está diseñada con un estilo de terminal, ofreciendo una experiencia visualmente atractiva e intuitiva.
 
-<<<<<<< HEAD
 ## ✨ Características Principales
 
 - **🔍 Escaneo de Puertos Optimizado**: Análisis paralelo con caché DNS, timeouts dinámicos y detección inteligente de servicios (100 hilos concurrentes)
 - **🔐 Generador de Contraseñas Avanzado**: Generación aleatoria o basada en frases memorables con opciones personalizables
 - **📄 Analizador de Metadatos**: Extracción de información oculta de archivos PDF, Word, Excel, imágenes y más (EXIF, GPS, autor, etc.)
 
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 ## 🌐 Demo en línea activa
 Puedes probar la aplicación directamente en:  
 🔗 [CyberTools](https://cybertools-3f82.onrender.com/)
@@ -57,7 +53,7 @@ Puedes probar la aplicación directamente en:
 1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/FacuRob/CyberTools
-<<<<<<< HEAD
+
    cd CyberTools
 
 2. **Instalar todas las dependencias**
@@ -71,23 +67,19 @@ Puedes probar la aplicación directamente en:
    - python-docx (análisis de Word)
    - openpyxl (análisis de Excel)
    - Y otras dependencias necesarias
-=======
+
    cd nombre-del-repositorio
 
 2. **Instalación de Microframework de Python**
    ```bash
    pip install Flask
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 
 3. **Ejecución del Sistema**
    ```bash
    python app.py
 
-<<<<<<< HEAD
    El servidor se ejecutará en http://127.0.0.1:5000
 
-=======
->>>>>>> ea30bd03880e80cd10b6c940e01e1e7ce2570fdc
 4. **Nota*: Al Ejecutar veras algo similar**
    ```bash
    * Serving Flask app 'app'
