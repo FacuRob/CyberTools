@@ -396,7 +396,6 @@ def analyze_metadata(file_path: str) -> Dict[str, Any]:
     analyzer = MetadataAnalyzer()
     return analyzer.analyze_file(file_path)
 
-
 # Test básico
 if __name__ == "__main__":
     print("=== Analizador de Metadatos ===")
